@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CONDATE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', serif;
+            background: #FFEB00;
+            min-height: 100vh;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .header {
+            padding: 3vh 0 2vh 0;
+            text-align: center;
+            background: #FFEB00;
+        }
+
+        .logo {
+            font-size: clamp(5rem, 12vw, 14rem);
+            font-weight: 900;
+            color: #FF0000;
+            letter-spacing: 0.08em;
+            line-height: 0.65;
+            transform: scaleY(0.5);
+            margin: 0;
+            text-shadow: 3px 3px 0 #000000;
+        }
+
+        .middle {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            position: relative;
+            min-height: 0;
+        }
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            max-width: 90vw;
+        }
+
+        .menu-container.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-name {
+            font-size: clamp(3rem, 10vw, 12rem);
+            font-weight: 900;
+            color: #000000;
+            text-align: center;
+            letter-spacing: -0.02em;
+            line-height: 0.9;
+            transform: scaleY(1.8);
+            white-space: nowrap;
+            overflow: visible;
+        }
+
+        .menu-english {
+            font-size: clamp(0.6rem, 1.5vw, 1.2rem);
+            font-weight: 400;
+            color: #000000;
+            text-align: center;
+            letter-spacing: 0.05em;
+            margin-top: clamp(1.5rem, 3.5vw, 3rem);
+            opacity: 0.7;
+            font-style: italic;
+        }
+
+        .footer {
+            padding: 3vh 0 4vh 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #FFEB00;
+        }
+
+        .eat-button {
+            width: clamp(160px, 20vw, 280px);
+            height: clamp(160px, 20vw, 280px);
+            border: none;
+            background: #FF0000;
+            color: #FFEB00;
+            font-family: 'Times New Roman', serif;
+            font-size: clamp(2.5rem, 5vw, 5.5rem);
+            font-weight: 900;
+            cursor: pointer;
+            letter-spacing: 0.15em;
+            border-radius: 50%;
+            transform: scaleY(0.5);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .eat-button:active {
+            transform: scaleY(0.48);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 2vh 0 1.5vh 0;
+            }
+
+            .footer {
+                padding: 2vh 0 3vh 0;
+            }
+
+            .middle {
+                padding: 0 5vw;
+            }
+            
+            .menu-name {
+                font-size: clamp(4rem, 13vw, 10rem);
+                white-space: normal;
+                word-break: keep-all;
+                overflow-wrap: normal;
+                line-height: 1.1;
+                max-width: 90vw;
+            }
+
+            .menu-english {
+                font-size: clamp(0.5rem, 1.8vw, 1rem);
+                margin-top: clamp(1.5rem, 3.5vw, 2.5rem);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                line-height: 0.7;
+                font-size: clamp(3.5rem, 10vw, 5rem);
+            }
+            
+            .menu-name {
+                font-size: clamp(3.5rem, 12vw, 8rem);
+                line-height: 1.15;
+                max-width: 85vw;
+            }
+
+            .menu-english {
+                font-size: clamp(0.45rem, 1.5vw, 0.8rem);
+                margin-top: clamp(1.2rem, 3vw, 2rem);
+            }
+            
+            .eat-button {
+                width: clamp(140px, 35vw, 180px);
+                height: clamp(140px, 35vw, 180px);
+                font-size: clamp(2rem, 4.5vw, 3rem);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="logo">CONDATE</h1>
+    </div>
+
+    <div class="middle">
+        <div class="menu-container" id="menuContainer">
+            <div class="menu-name" id="menuName">カレーライス</div>
+            <div class="menu-english" id="menuEnglish">Curry Rice</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button class="eat-button" id="eatButton">EAT</button>
+    </div>
+
+    <script>
+        const menus = [
+            // 和食（定番）
+            { name: '親子丼', english: 'Oyakodon' },
+            { name: '天ぷらそば', english: 'Tempura Soba' },
+            { name: '鮭の塩焼き定食', english: 'Grilled Salmon Set' },
+            { name: 'とんかつ定食', english: 'Tonkatsu Set' },
+            { name: 'すき焼き', english: 'Sukiyaki' },
+            { name: '海鮮丼', english: 'Seafood Bowl' },
+            { name: 'うな重', english: 'Unagi Don' },
+            { name: '焼き魚定食', english: 'Grilled Fish Set' },
+            { name: 'お好み焼き', english: 'Okonomiyaki' },
+            { name: 'たこ焼き', english: 'Takoyaki' },
+            { name: '牛丼', english: 'Gyudon' },
+            { name: 'カツ丼', english: 'Katsudon' },
+            { name: '天丼', english: 'Tendon' },
+            { name: '鉄火丼', english: 'Tekkadon' },
+            { name: 'ちらし寿司', english: 'Chirashi Sushi' },
+            { name: 'ざるそば', english: 'Zaru Soba' },
+            { name: 'きつねうどん', english: 'Kitsune Udon' },
+            { name: '肉うどん', english: 'Niku Udon' },
+            { name: 'カレーうどん', english: 'Curry Udon' },
+            { name: '釜玉うどん', english: 'Kamatama Udon' },
+            
+            // 和食（マニアック）
+            { name: 'ひつまぶし', english: 'Hitsumabushi' },
+            { name: '鰻の白焼き', english: 'Unagi Shirayaki' },
+            { name: '鯖の味噌煮', english: 'Mackerel Miso' },
+            { name: 'ぶり大根', english: 'Buri Daikon' },
+            { name: '筑前煮', english: 'Chikuzenni' },
+            { name: 'いわしの梅煮', english: 'Iwashi Umeni' },
+            { name: 'なめろう', english: 'Namero' },
+            { name: '茶碗蒸し', english: 'Chawanmushi' },
+            { name: 'だし巻き卵', english: 'Dashimaki Tamago' },
+            { name: '豚の角煮', english: 'Buta Kakuni' },
+            
+            // 洋食（定番）
+            { name: 'カレーライス', english: 'Curry Rice' },
+            { name: 'ハンバーグ', english: 'Hamburger Steak' },
+            { name: 'オムライス', english: 'Omurice' },
+            { name: 'ナポリタン', english: 'Napolitan' },
+            { name: 'ミートソース', english: 'Meat Sauce' },
+            { name: 'カルボナーラ', english: 'Carbonara' },
+            { name: 'グラタン', english: 'Gratin' },
+            { name: 'ピザ', english: 'Pizza' },
+            { name: 'ステーキ', english: 'Steak' },
+            { name: 'ハヤシライス', english: 'Hayashi Rice' },
+            { name: 'ドリア', english: 'Doria' },
+            { name: 'コロッケ', english: 'Korokke' },
+            { name: 'メンチカツ', english: 'Menchi Katsu' },
+            { name: 'エビフライ', english: 'Fried Shrimp' },
+            { name: 'ポークジンジャー', english: 'Ginger Pork' },
+            
+            // 洋食（マニアック）
+            { name: 'ビーフシチュー', english: 'Beef Stew' },
+            { name: 'タンシチュー', english: 'Tongue Stew' },
+            { name: 'ボルシチ', english: 'Borscht' },
+            { name: 'ラタトゥイユ', english: 'Ratatouille' },
+            { name: 'キッシュ', english: 'Quiche' },
+            { name: 'クラムチャウダー', english: 'Clam Chowder' },
+            { name: 'ミネストローネ', english: 'Minestrone' },
+            { name: 'アヒージョ', english: 'Ajillo' },
+            { name: 'パエリア', english: 'Paella' },
+            { name: 'リゾット', english: 'Risotto' },
+            { name: 'ラザニア', english: 'Lasagna' },
+            { name: 'ジェノベーゼ', english: 'Genovese' },
+            { name: 'ペペロンチーノ', english: 'Peperoncino' },
+            { name: 'プッタネスカ', english: 'Puttanesca' },
+            { name: 'アマトリチャーナ', english: 'Amatriciana' },
+            
+            // 中華（定番）
+            { name: 'チャーハン', english: 'Fried Rice' },
+            { name: '麻婆豆腐', english: 'Mapo Tofu' },
+            { name: '餃子', english: 'Gyoza' },
+            { name: 'エビチリ', english: 'Chili Shrimp' },
+            { name: '青椒肉絲', english: 'Pepper Steak' },
+            { name: '酢豚', english: 'Sweet & Sour Pork' },
+            { name: '担々麺', english: 'Tantanmen' },
+            { name: '回鍋肉', english: 'Twice Cooked Pork' },
+            { name: '天津飯', english: 'Tenshinhan' },
+            { name: '春巻き', english: 'Spring Roll' },
+            { name: 'ラーメン', english: 'Ramen' },
+            { name: 'つけ麺', english: 'Tsukemen' },
+            
+            // 中華（マニアック）
+            { name: '北京ダック', english: 'Peking Duck' },
+            { name: '小籠包', english: 'Xiaolongbao' },
+            { name: '麻辣火鍋', english: 'Mala Hotpot' },
+            { name: '四川火鍋', english: 'Sichuan Hotpot' },
+            { name: '宮保鶏丁', english: 'Kung Pao Chicken' },
+            { name: '棒棒鶏', english: 'Bang Bang Chicken' },
+            { name: '乾焼蝦仁', english: 'Dry Fried Shrimp' },
+            { name: '麻婆茄子', english: 'Mapo Eggplant' },
+            { name: '水餃子', english: 'Boiled Dumplings' },
+            { name: '蒸し餃子', english: 'Steamed Dumplings' },
+            { name: 'ジャージャー麺', english: 'Jajangmyeon' },
+            { name: '刀削麺', english: 'Dao Xiao Mian' },
+            
+            // エスニック・その他
+            { name: 'ガパオライス', english: 'Gapao Rice' },
+            { name: 'フォー', english: 'Pho' },
+            { name: 'ビビンバ', english: 'Bibimbap' },
+            { name: 'タコス', english: 'Tacos' },
+            { name: 'トムヤムクン', english: 'Tom Yum Goong' },
+            { name: 'パッタイ', english: 'Pad Thai' },
+            { name: 'グリーンカレー', english: 'Green Curry' },
+            { name: 'マッサマンカレー', english: 'Massaman Curry' },
+            { name: 'ナシゴレン', english: 'Nasi Goreng' },
+            { name: 'ミーゴレン', english: 'Mie Goreng' },
+            { name: 'ルンダン', english: 'Rendang' },
+            { name: 'ブリトー', english: 'Burrito' },
+            { name: 'ケバブ', english: 'Kebab' },
+            { name: 'ファラフェル', english: 'Falafel' },
+            { name: 'シャクシュカ', english: 'Shakshuka' },
+            { name: 'ビリヤニ', english: 'Biryani' },
+            { name: 'バターチキンカレー', english: 'Butter Chicken' },
+            { name: 'サモサ', english: 'Samosa' },
+            { name: 'チキンティッカ', english: 'Chicken Tikka' },
+            { name: 'ケバブライス', english: 'Kebab Rice' },
+        ];
+
+        // AudioContextで「ババーン」音を生成
+        const playBabanSound = () => {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // 低音のインパクト音
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(80, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(40, audioContext.currentTime + 0.3);
+            
+            gainNode.gain.setValueAtTime(0.8, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+            
+            // 高音のアクセント
+            const oscillator2 = audioContext.createOscillator();
+            const gainNode2 = audioContext.createGain();
+            
+            oscillator2.connect(gainNode2);
+            gainNode2.connect(audioContext.destination);
+            
+            oscillator2.type = 'square';
+            oscillator2.frequency.setValueAtTime(400, audioContext.currentTime);
+            oscillator2.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.2);
+            
+            gainNode2.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator2.start(audioContext.currentTime);
+            oscillator2.stop(audioContext.currentTime + 0.3);
+        };
+
+        const eatButton = document.getElementById('eatButton');
+        const menuContainer = document.getElementById('menuContainer');
+        const menuName = document.getElementById('menuName');
+        const menuEnglish = document.getElementById('menuEnglish');
+
+        eatButton.addEventListener('click', () => {
+            const randomMenu = menus[Math.floor(Math.random() * menus.length)];
+            menuName.textContent = randomMenu.name;
+            menuEnglish.textContent = randomMenu.english;
+            menuContainer.classList.add('show');
+            
+            // 「ババーン」音を再生
+            playBabanSound();
+        });
+    </script>
+</body>
+</html>
